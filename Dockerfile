@@ -31,6 +31,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) bcmath \
     && docker-php-ext-configure zip \
     && docker-php-ext-install -j$(nproc) zip \
+    && docker-php-ext-configure exif \
+    && docker-php-ext-install -j$(nproc) exif \
     && pecl install memcached \
     && docker-php-ext-enable memcached \
     && pecl install igbinary \
