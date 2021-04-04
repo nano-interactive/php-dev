@@ -1,4 +1,4 @@
-PHP_VER ?= 7.4
+PHP_VER ?= 8.0
 TAG ?= dev
 
 .PHONY: build
