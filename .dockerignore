@@ -1,0 +1,5 @@
+.github/
+.vscode/
+Makefile
+*.md
+LICENCE
