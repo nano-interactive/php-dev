@@ -3,15 +3,15 @@ TAG ?= dev
 
 .PHONY: build
 build:
-	docker build -t "brossquad/php-dev:$(PHP_VER)-$(TAG)" --compress .
+	docker build -t "nanointeractive/swoole-dev:$(PHP_VER)-$(TAG)" --compress .
 
 .PHONY: run
 run:
-	docker run --rm -it brossquad/php-dev:$(PHP_VER)-$(TAG) bash
+	docker run --rm -it nanointeractive/swoole-dev:$(PHP_VER)-$(TAG) bash
 
 .PHONY: remove
 remove:
-	docker image rm --force brossquad/php-dev:$(PHP_VER)-$(TAG)
+	docker image rm --force nanointeractive/swoole-dev:$(PHP_VER)-$(TAG)
 
 .PHONY: clean
 clean:
