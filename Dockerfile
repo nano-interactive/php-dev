@@ -1,12 +1,12 @@
 
-FROM php:8.0-fpm as cassandra-build
+FROM php:7.4-fpm as cassandra-build
 
 ENV EXT_CASSANDRA_VERSION=master
 
 RUN docker-php-source extract \
     && apt update -y \
     && apt install cmake build-essential git libuv1-dev libssl-dev libgmp-dev openssl zlib1g-dev libpcre3-dev -y \
-    && git clone --branch $EXT_CASSANDRA_VERSION --depth 1 https://github.com/nano-interactive/php-driver.git /usr/src/php/ext/cassandra \
+    && git clone --branch $EXT_CASSANDRA_VERSION --depth 1 https://github.com/datastax/php-driver.git /usr/src/php/ext/cassandra \
     && cd /usr/src/php/ext/cassandra && git submodule update --init \
     && mkdir -p /usr/src/php/ext/cassandra/lib/cpp-driver/build \
     && cmake -DCMAKE_CXX_FLAGS="-fPIC" -DCASS_BUILD_STATIC=OFF -DCASS_BUILD_SHARED=ON -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_LIBDIR:PATH=lib -DCASS_USE_ZLIB=ON /usr/src/php/ext/cassandra/lib/cpp-driver \
@@ -19,27 +19,12 @@ RUN cd /usr/src/php/ext/cassandra/ext \
     && LDFLAGS="-L/usr/local/lib" LIBS="-lssl -lz -luv -lm -lgmp -lstdc++" ./configure --with-cassandra=/usr/local \
     && make -j8 && make install
 
-FROM php:8.0-fpm as yasd
 
-
-RUN apt update && apt install git libboost-all-dev -y  \
-    && git clone https://github.com/swoole/yasd.git /yasd \
-    && cd /yasd \
-    &&  git fetch --all --tags \
-    && git checkout tags/v0.3.7 -b v0.3.7 \
-    && phpize --clean && \
-    phpize && \
-    ./configure && \
-    make clean && \
-    make -j8 && \
-    make install
-
-FROM php:8.0-fpm
+FROM php:7.4-fpm
 
 
 COPY --from=cassandra-build /usr/local/lib/libcassandra.so.2.15.1 /usr/local/lib/libcassandra.so.2.15.1
-COPY --from=cassandra-build /usr/local/lib/php/extensions/no-debug-non-zts-20200930/cassandra.so /usr/local/lib/php/extensions/no-debug-non-zts-20200930/cassandra.so
-COPY --from=yasd /usr/local/lib/php/extensions/no-debug-non-zts-20200930/yasd.so /usr/local/lib/php/extensions/no-debug-non-zts-20200930/yasd.so
+COPY --from=cassandra-build /usr/local/lib/php/extensions/no-debug-non-zts-20190902/cassandra.so /usr/local/lib/php/extensions/no-debug-non-zts-20190902/cassandra.so
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 ENV PHP_IDE_CONFIG="serverName=NanoCisEngine"
@@ -70,7 +55,7 @@ RUN ln -s /usr/local/lib/libcassandra.so.2.15.1 /usr/local/lib/libcassandra.so \
     libwebp-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j8 gd \
-    && install-php-extensions intl zip bcmath pgsql pdo_pgsql pdo_mysql pcntl gmp geospatial xhprof yaml zstd opcache uuid timezonedb pcntl amqp json_post imagick memcached apcu igbinary ast grpc protobuf redis maxminddb mongodb swoole msgpack \
+    && install-php-extensions intl zip bcmath pgsql pdo_pgsql pdo_mysql pcntl phalcon gmp geospatial xhprof yaml zstd opcache uuid timezonedb pcntl amqp json_post imagick memcached apcu igbinary ast grpc protobuf redis maxminddb mongodb msgpack \
     && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/bin --filename=composer \
     && php -r "unlink('composer-setup.php');"
