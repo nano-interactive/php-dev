@@ -31,7 +31,8 @@ ENV PHP_IDE_CONFIG="serverName=NanoCisEngine"
 
 
 # Install Core Extensions
-RUN ln -s /usr/local/lib/libcassandra.so.2.15.1 /usr/local/lib/libcassandra.so \
+RUN groupadd -g 101 nginx && useradd -m -s /bin/bash -u 101 -g 101 nginx && \
+    ln -s /usr/local/lib/libcassandra.so.2.15.1 /usr/local/lib/libcassandra.so \
     && apt-get update && apt-get install -y \
     git \
     libboost-all-dev \
@@ -67,6 +68,6 @@ COPY ./conf.d/docker-php-ext-apcu.ini /usr/local/etc/php/conf.d/docker-php-ext-a
 COPY ./conf.d/docker-php-ext-igbinary.ini /usr/local/etc/php/conf.d/docker-php-ext-igbinary.ini
 COPY ./conf.d/docker-php-ext-redis.ini /usr/local/etc/php/conf.d/docker-php-ext-redis.ini
 COPY ./conf.d/docker-php-ext-cassandra.ini /usr/local/etc/php/conf.d/docker-php-ext-cassandra.ini
-
+COPY ./php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 
 CMD ["/bin/bash"]
