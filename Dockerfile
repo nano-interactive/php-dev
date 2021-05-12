@@ -55,7 +55,7 @@ RUN ln -s /usr/local/lib/libcassandra.so.2.15.1 /usr/local/lib/libcassandra.so \
     libwebp-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j8 gd \
-    && install-php-extensions intl zip bcmath pgsql pdo_pgsql pdo_mysql pcntl phalcon gmp geospatial xhprof yaml zstd opcache uuid timezonedb pcntl amqp json_post imagick memcached apcu igbinary ast grpc protobuf redis maxminddb mongodb msgpack \
+    && install-php-extensions intl zip bcmath pgsql pdo_pgsql pdo_mysql pcntl psr phalcon gmp geospatial xhprof yaml zstd opcache uuid timezonedb pcntl amqp json_post imagick memcached apcu igbinary ast grpc protobuf redis maxminddb mongodb msgpack \
     && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/bin --filename=composer \
     && php -r "unlink('composer-setup.php');"
